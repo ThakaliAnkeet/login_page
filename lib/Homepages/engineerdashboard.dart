@@ -8,12 +8,24 @@ class EngineerDashboardPage extends StatefulWidget {
 
 class _EngineerDashboardPageState extends State<EngineerDashboardPage> {
   late Stream<QuerySnapshot<Map<String, dynamic>>> _vacancyStream;
+  Map<String, String> dropdownValues = {};
 
   @override
   void initState() {
     super.initState();
     _vacancyStream =
         FirebaseFirestore.instance.collection('Service_Request').snapshots();
+  }
+
+  void _saveStatusToFirestore(String documentId) async {
+    final collectionRef =
+        FirebaseFirestore.instance.collection('Service_Request');
+    await collectionRef
+        .doc(documentId)
+        .update({'Status': dropdownValues[documentId]});
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Status saved to Firestore')),
+    );
   }
 
   @override
@@ -38,18 +50,25 @@ class _EngineerDashboardPageState extends State<EngineerDashboardPage> {
             return Center(child: Text('No vacancy requests available'));
           }
 
+          // Update the dropdown values map only with new document IDs
+          for (final doc in snapshot.data!.docs) {
+            final documentId = doc.id;
+            if (!dropdownValues.containsKey(documentId)) {
+              dropdownValues[documentId] = 'Pending';
+            }
+          }
+
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
               final vacancy = snapshot.data!.docs[index].data();
-              final title = vacancy['Title'] ?? '';
+              final documentId = snapshot.data!.docs[index].id;
+              final title = vacancy['Service Title'] ?? '';
               final city = vacancy['City'] ?? '';
               final streetNumber = vacancy['Street Number'] ?? '';
               final buildingNumber = vacancy['Building Number'] ?? '';
               final mapLink = vacancy['Google Map Link'] ?? '';
               final contactNumber = vacancy['Contact Number'] ?? '';
-
-              String dropdownValue = 'Pending';
 
               return Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -76,10 +95,12 @@ class _EngineerDashboardPageState extends State<EngineerDashboardPage> {
                           children: [
                             Text('Status:'),
                             DropdownButton<String>(
-                              value: dropdownValue,
+                              value: dropdownValues[documentId]!,
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  dropdownValue = newValue!;
+                                  dropdownValues[documentId] = newValue!;
+                                  print(
+                                      'new value for $documentId: ${dropdownValues[documentId]}');
                                 });
                               },
                               items: <String>[
@@ -94,6 +115,11 @@ class _EngineerDashboardPageState extends State<EngineerDashboardPage> {
                                   );
                                 },
                               ).toList(),
+                            ),
+                            ElevatedButton(
+                              onPressed: () =>
+                                  _saveStatusToFirestore(documentId),
+                              child: Text('Save'),
                             ),
                           ],
                         ),

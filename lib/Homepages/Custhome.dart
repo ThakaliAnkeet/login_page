@@ -1,32 +1,20 @@
-import 'dart:ui';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cube/flutter_cube.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:login_page/CustomerTasks/requestforrent.dart';
-import 'package:login_page/CustomerTasks/requestvisit.dart';
-import 'package:login_page/CustomerTasks/viewvacantflat.dart';
-import 'package:login_page/Homepages/3dview.dart';
 import 'package:login_page/Homepages/ImageScrollview.dart';
 import 'package:login_page/Homepages/Imagelistview.dart';
 import 'package:login_page/Homepages/Report.dart';
 import 'package:login_page/Homepages/ServiceImageScrollview.dart';
 import 'package:login_page/Homepages/Setting.dart';
 import 'package:login_page/Homepages/Userprofile.dart';
+import 'package:login_page/Homepages/in_app_tour_target.dart';
 import 'package:login_page/Homepages/location.dart';
 import 'package:login_page/Homepages/servicelist.dart';
-import 'package:login_page/forgotpassword.dart';
-import 'package:login_page/profilepage.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:model_viewer_plus/model_viewer_plus.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class CustHome extends StatefulWidget {
   @override
@@ -34,6 +22,7 @@ class CustHome extends StatefulWidget {
 }
 
 class _CustHomeState extends State<CustHome> {
+  bool showTutorial = true;
   bool showHouses = true;
   bool showServices = false;
   bool showMicrophoneAvatar = false;
@@ -42,9 +31,97 @@ class _CustHomeState extends State<CustHome> {
   final _searchController = TextEditingController();
   var text = 'Hold the button and start speaking';
 
+  final menukey = GlobalKey();
+  final searchkey = GlobalKey();
+  final profilekey = GlobalKey();
+  final locationkey = GlobalKey();
+  final reportkey = GlobalKey();
+  final settingskey = GlobalKey();
+  final logoutkey = GlobalKey();
+  final navigationkey = GlobalKey();
+  final scrollkey = GlobalKey();
+  final listkey = GlobalKey();
+
+  late TutorialCoachMark tutorialCoachMark1;
+  late TutorialCoachMark tutorialCoachMark2;
+
+  void _initCusthometargets() {
+    tutorialCoachMark1 = TutorialCoachMark(
+        targets: CusthomeTargets(
+            menukey: menukey,
+            searchkey: searchkey,
+            navigationkey: navigationkey,
+            scrollkey: scrollkey,
+            listkey: listkey),
+        colorShadow: Color(0xFF858585),
+        paddingFocus: 10,
+        hideSkip: false,
+        opacityShadow: 0.8,
+        onFinish: () {
+          print('Completed');
+        });
+  }
+
+  void _initsidebartargets() {
+    tutorialCoachMark2 = TutorialCoachMark(
+        targets: CusthomesideTargets(
+            profilekey: profilekey,
+            reportkey: reportkey,
+            locationkey: locationkey,
+            settingskey: settingskey,
+            logoutkey: logoutkey),
+        colorShadow: Color(0xFF858585),
+        paddingFocus: 10,
+        hideSkip: false,
+        opacityShadow: 0.8,
+        onFinish: () {
+          print('Completed');
+        });
+  }
+
+  void _showHomeTour() {
+    Future.delayed(const Duration(seconds: 1), () {
+      tutorialCoachMark1.show(context: context);
+    });
+  }
+
+  void _showsideTour() {
+    Future.delayed(const Duration(seconds: 1), () {
+      tutorialCoachMark2.show(context: context);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    checkFirstLoginStatus();
+    _initCusthometargets();
+    _initsidebartargets();
+  }
+
+  Future<void> checkFirstLoginStatus() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('Customers')
+          .doc(user.uid)
+          .get();
+      bool firstLogin = snapshot.data()?['firstlogin'] ?? true;
+
+      if (firstLogin) {
+        // Show the tutorial
+        setState(() {
+          showTutorial = true;
+        });
+
+        // Update the 'firstlogin' field in Firestore to false
+        await FirebaseFirestore.instance
+            .collection('Customers')
+            .doc(user.uid)
+            .update({'firstlogin': false});
+      }
+    }
   }
 
   void _showVoicePrompt() {
@@ -166,6 +243,7 @@ class _CustHomeState extends State<CustHome> {
                 ),
               ),
               ListTile(
+                key: profilekey,
                 leading: Icon(
                   Icons.person,
                   color: Colors.white,
@@ -185,6 +263,7 @@ class _CustHomeState extends State<CustHome> {
                 },
               ),
               ListTile(
+                key: reportkey,
                 leading: Icon(
                   Icons.picture_as_pdf,
                   color: Colors.white,
@@ -204,6 +283,7 @@ class _CustHomeState extends State<CustHome> {
                 },
               ),
               ListTile(
+                key: locationkey,
                 leading: Icon(
                   Icons.location_on_rounded,
                   color: Colors.white,
@@ -223,6 +303,7 @@ class _CustHomeState extends State<CustHome> {
                 },
               ),
               ListTile(
+                key: settingskey,
                 leading: Icon(
                   Icons.settings,
                   color: Colors.white,
@@ -242,6 +323,7 @@ class _CustHomeState extends State<CustHome> {
                 },
               ),
               ListTile(
+                key: logoutkey,
                 leading: Icon(Icons.logout, color: Colors.white),
                 title: Text(
                   'Logout',
@@ -250,6 +332,16 @@ class _CustHomeState extends State<CustHome> {
                   ),
                 ),
                 onTap: () => _signOut(context),
+              ),
+              ListTile(
+                leading: Icon(Icons.question_mark_sharp, color: Colors.white),
+                title: Text(
+                  'Help',
+                  style: TextStyle(
+                    color: Colors.white, // Set the text color to white
+                  ),
+                ),
+                onTap: () => _showsideTour(),
               ),
             ],
           ),
@@ -268,6 +360,7 @@ class _CustHomeState extends State<CustHome> {
                 children: [
                   Builder(builder: (BuildContext context) {
                     return IconButton(
+                      key: menukey,
                       icon: Icon(Icons.menu),
                       onPressed: () {
                         // Open drawer menu
@@ -276,6 +369,7 @@ class _CustHomeState extends State<CustHome> {
                     );
                   }),
                   Expanded(
+                    key: searchkey,
                     child: TextField(
                       controller: _searchController,
                       decoration: InputDecoration(
@@ -294,10 +388,18 @@ class _CustHomeState extends State<CustHome> {
                                   icon: Icon(Icons.mic))),
                     ),
                   ),
+                  IconButton(
+                    onPressed: () {
+                      _showHomeTour();
+                    },
+                    icon: Icon(Icons.question_mark_sharp),
+                    color: Color(0xFFDB2227),
+                  )
                 ],
               ),
             ),
             Padding(
+              key: navigationkey,
               padding: const EdgeInsets.all(20.0),
               child: Row(
                 children: [
@@ -386,6 +488,7 @@ class _CustHomeState extends State<CustHome> {
             ),
             if (showServices)
               Padding(
+                key: scrollkey,
                 padding: const EdgeInsets.only(left: 5),
                 child: Container(
                   child: ServiceImageScrollView(),
@@ -408,6 +511,7 @@ class _CustHomeState extends State<CustHome> {
               ),
             if (showServices)
               Padding(
+                key: listkey,
                 padding: const EdgeInsets.only(left: 5),
                 child: Container(
                   height: 300,
@@ -416,6 +520,7 @@ class _CustHomeState extends State<CustHome> {
               ),
             if (showHouses)
               Padding(
+                key: scrollkey,
                 padding: const EdgeInsets.only(left: 5),
                 child: Container(
                   child: ImageScrollView(),
@@ -438,6 +543,7 @@ class _CustHomeState extends State<CustHome> {
               ),
             if (showHouses)
               Padding(
+                key: listkey,
                 padding: const EdgeInsets.only(left: 5),
                 child: Container(
                   height: 300,

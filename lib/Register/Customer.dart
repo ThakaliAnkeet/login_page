@@ -145,6 +145,7 @@ class _CustomerRegisterState extends State<CustomerRegister> {
       'role': role,
       'civilId': civilId,
       'isVerified': isVerified, // Store verification status
+      'firstlogin': true
     });
   }
 
