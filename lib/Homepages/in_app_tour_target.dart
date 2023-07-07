@@ -141,7 +141,7 @@ List<TargetFocus> CusthomeTargets({
       shape: ShapeLightFocus.RRect,
       contents: [
         TargetContent(
-          align: ContentAlign.bottom,
+          align: ContentAlign.top,
           builder: (context, controller) {
             return Container(
               alignment: Alignment.center,

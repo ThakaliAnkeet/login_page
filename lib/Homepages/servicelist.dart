@@ -7,7 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:login_page/Homepages/ImagedetailView.dart';
-import 'package:login_page/TenantTakss/requestforservice.dart';
+import 'package:login_page/Renter/requestforservice.dart';
 
 class serviceimagelist extends StatelessWidget {
   @override

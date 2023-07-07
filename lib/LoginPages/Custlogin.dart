@@ -11,6 +11,7 @@ import 'package:login_page/Homepages/ServiceEngineerhome.dart';
 import 'package:login_page/Homepages/Tenanthome.dart';
 import 'package:login_page/LoginPages/resetpassword.dart';
 import 'package:login_page/Register/Customer.dart';
+import 'package:login_page/Tenant/tenhome.dart';
 import 'package:login_page/admindashboard.dart';
 import 'package:login_page/forgotpassword.dart';
 import 'dart:convert';
@@ -478,7 +479,7 @@ class _CustLoginState extends State<CustLogin> {
                 builder: (context) => CustHome(),
               ),
             );
-          } else if (role == "Tenant") {
+          } else if (role == "Renter") {
             if (email == "admintest@gmail.com") {
               Navigator.push(
                 context,
@@ -499,6 +500,13 @@ class _CustLoginState extends State<CustLogin> {
               context,
               MaterialPageRoute(
                 builder: (context) => Serviceenghome(),
+              ),
+            );
+          } else if (role == "Tenant") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TenHome(),
               ),
             );
           }

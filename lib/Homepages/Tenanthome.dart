@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login_page/Homepages/ImageScrollview.dart';
 import 'package:login_page/Homepages/ServiceImageScrollview.dart';
+import 'package:login_page/Homepages/Setting.dart';
+import 'package:login_page/Homepages/Userprofile.dart';
 import 'package:login_page/Notification/receivenotification.dart';
-import 'package:login_page/TenantTakss/Addvacnacy.dart';
+import 'package:login_page/Renter/Addvacnacy.dart';
 import 'package:login_page/forgotpassword.dart';
 import 'package:login_page/profilepage.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -43,7 +45,7 @@ class _TenantHomeState extends State<TenantHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tenant'),
+        title: Text('Renter'),
         backgroundColor: Color(0xFFDB2227),
         actions: [
           GestureDetector(
@@ -58,6 +60,7 @@ class _TenantHomeState extends State<TenantHome> {
         ],
       ),
       drawer: Drawer(
+        backgroundColor: Color(0xFFDB2227),
         child: ListView(
           children: <Widget>[
             DrawerHeader(
@@ -75,54 +78,54 @@ class _TenantHomeState extends State<TenantHome> {
             ListTile(
               leading: Icon(
                 Icons.person,
-                color: Color(0xFFDB2227),
+                color: Colors.white,
               ),
               title: Text(
-                'Change Password',
+                'Profile',
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 240, 95, 84)),
+                    color: Colors.white),
               ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()),
+                  MaterialPageRoute(builder: (context) => UserProfile()),
                 );
               },
             ),
             ListTile(
               leading: Icon(
-                Icons.lock,
-                color: Color(0xFFDB2227),
+                Icons.settings,
+                color: Colors.white,
               ),
               title: Text(
-                'Reset Password',
+                'Settings',
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 240, 95, 84)),
+                    color: Colors.white),
               ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ResetPasswordPage()),
+                  MaterialPageRoute(builder: (context) => Setting()),
                 );
               },
             ),
             ListTile(
               leading: Icon(
                 Icons.logout,
-                color: Color(0xFFDB2227),
+                color: Colors.white,
               ),
               title: Text(
                 'Logout',
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 240, 95, 84)),
+                    color: Colors.white),
               ),
               onTap: () => _signOut(context),
             ),
@@ -186,37 +189,6 @@ class _TenantHomeState extends State<TenantHome> {
               child: Container(
                 height: 270,
                 child: ImageScrollView(),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5.0),
-              child: GestureDetector(
-                onTap: () {
-                  getDoc();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddVacancy1(),
-                    ),
-                  );
-                },
-                child: Container(
-                  padding: EdgeInsets.all(50),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFDB2227),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Add a Vacancy',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ),
           ],

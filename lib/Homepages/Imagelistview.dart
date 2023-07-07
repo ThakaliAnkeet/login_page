@@ -8,7 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:login_page/CustomerTasks/requestforrent.dart';
 import 'package:login_page/Homepages/ImagedetailView.dart';
-import 'package:login_page/TenantTakss/requestforvacancy.dart';
+import 'package:login_page/Renter/requestforvacancy.dart';
 
 class imagelist extends StatelessWidget {
   @override

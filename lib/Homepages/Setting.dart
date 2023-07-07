@@ -85,28 +85,31 @@ class _SettingState extends State<Setting> {
                 ),
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BiometricSetupPage(),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BiometricSetupPage(),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(30),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFDB2227),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                );
-              },
-              child: Container(
-                padding: EdgeInsets.all(30),
-                decoration: BoxDecoration(
-                  color: Color(0xFFDB2227),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Center(
-                  child: Text(
-                    'Set up Biometrics',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                  child: Center(
+                    child: Text(
+                      'Set up Biometrics',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ),

@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:login_page/Homepages/ServiceImageScrollview.dart';
+import 'package:login_page/Homepages/Setting.dart';
+import 'package:login_page/Homepages/Userprofile.dart';
 import 'package:login_page/Homepages/engineerdashboard.dart';
 import 'package:login_page/ServiceEngineerTasks/addservice1.dart';
 import 'package:login_page/ServiceEngineerTasks/requestcheck.dart';
@@ -58,118 +60,89 @@ class _ServiceenghomeState extends State<Serviceenghome> {
       appBar: AppBar(
         title: Text('Service Engineer'),
         backgroundColor: Color(0xFFDB2227),
+        actions: [
+          GestureDetector(
+            child: IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddService()));
+              },
+            ),
+          )
+        ],
       ),
       drawer: Drawer(
-        child: Container(
-          color: Color(0xFFDB2227), // Set the background color of the drawer
-          child: ListView(
-            children: <Widget>[
-              ListTile(
-                leading: Icon(
-                  Icons.person,
-                  color: Colors.white, // Set the icon color to white
-                ),
-                title: Text(
-                  'Change Password',
-                  style: TextStyle(
-                      color: Colors.white), // Set the text color to white
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()),
-                  );
-                },
+        backgroundColor: Color(0xFFDB2227),
+        child: ListView(
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color(0xFFDB2227),
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.person,
-                  color: Colors.white, // Set the icon color to white
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.white,
                 ),
-                title: Text(
-                  'Profile',
-                  style: TextStyle(
-                      color: Colors.white), // Set the text color to white
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()),
-                  );
-                },
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.settings,
-                  color: Colors.white, // Set the icon color to white
-                ),
-                title: Text(
-                  'Dashboard',
-                  style: TextStyle(
-                      color: Colors.white), // Set the text color to white
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EngineerDashboardPage()),
-                  );
-                },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.person,
+                color: Colors.white,
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.lock,
-                  color: Colors.white, // Set the icon color to white
-                ),
-                title: Text(
-                  'Reset Password',
-                  style: TextStyle(
-                      color: Colors.white), // Set the text color to white
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ResetPasswordPage()),
-                  );
-                },
+              title: Text(
+                'Profile',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.settings,
-                  color: Colors.white, // Set the icon color to white
-                ),
-                title: Text(
-                  'Setting',
-                  style: TextStyle(
-                      color: Colors.white), // Set the text color to white
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()),
-                  );
-                },
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UserProfile()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.settings,
+                color: Colors.white,
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.power_settings_new,
-                  color: Colors.white, // Set the icon color to white
-                ),
-                title: Text(
-                  'Logout',
-                  style: TextStyle(
-                      color: Colors.white), // Set the text color to white
-                ),
-                onTap: () => _signOut(context),
+              title: Text(
+                'Settings',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
-            ],
-          ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Setting()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.logout,
+                color: Colors.white,
+              ),
+              title: Text(
+                'Logout',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              onTap: () => _signOut(context),
+            ),
+          ],
         ),
       ),
       body: SingleChildScrollView(
@@ -241,32 +214,6 @@ class _ServiceenghomeState extends State<Serviceenghome> {
             ),
             SizedBox(
               height: 50,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AddService()));
-                },
-                child: Container(
-                  padding: EdgeInsets.all(50),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFDB2227),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Add a service',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ),
           ],
         ),

@@ -45,6 +45,16 @@ class _RoleSelectionState extends State<RoleSelection> {
               },
               child: Text('Customer'),
             ),
+            ElevatedButton(
+              onPressed: () async {
+                await saveRoleSelection('Tenant');
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => CustLogin()),
+                );
+              },
+              child: Text('Tenant'),
+            ),
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: () async {
@@ -52,7 +62,7 @@ class _RoleSelectionState extends State<RoleSelection> {
                   _isTenantSelected = true;
                 });
               },
-              child: Text('Tenant'),
+              child: Text('Renter'),
             ),
             if (_isTenantSelected)
               Padding(
@@ -76,7 +86,7 @@ class _RoleSelectionState extends State<RoleSelection> {
                       _civilIdController.text != "00000000") {
                     if (await isCivilIdAvailable(_civilIdController.text)) {
                       await saveTenantRoleSelection(
-                          'Tenant', _civilIdController.text);
+                          'Renter', _civilIdController.text);
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

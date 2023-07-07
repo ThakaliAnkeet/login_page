@@ -103,6 +103,18 @@ class ImageScrollView extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               ),
+                              Positioned(
+                                top: 45,
+                                right: 20,
+                                child: Text(
+                                  '${imageData.locationName}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -155,12 +167,13 @@ class ImageData {
   final String imageUrl;
   final String imageName;
   final dynamic fieldValue;
+  final dynamic locationName;
 
-  ImageData({
-    required this.imageUrl,
-    required this.imageName,
-    required this.fieldValue,
-  });
+  ImageData(
+      {required this.imageUrl,
+      required this.imageName,
+      required this.fieldValue,
+      required this.locationName});
 }
 
 Future<List<ImageData>> fetchImageUrls() async {
@@ -175,13 +188,14 @@ Future<List<ImageData>> fetchImageUrls() async {
     final String imageUrl = await ref.getDownloadURL();
     final String imageName = ref.name;
     dynamic fieldValue = await fetchData('Vacancy', imageName, 'Title');
+    dynamic location = await fetchData('Vacancy', imageName, 'location');
 
     imageList.add(
       ImageData(
-        imageUrl: imageUrl,
-        imageName: imageName,
-        fieldValue: fieldValue,
-      ),
+          imageUrl: imageUrl,
+          imageName: imageName,
+          fieldValue: fieldValue,
+          locationName: location),
     );
   }
 

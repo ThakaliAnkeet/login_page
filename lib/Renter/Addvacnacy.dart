@@ -7,7 +7,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:login_page/ServiceEngineerTasks/addservice2.dart';
-import 'package:login_page/TenantTakss/Addvacancy2.dart';
+import 'package:login_page/Renter/Addvacancy2.dart';
 import 'package:base58check/base58check.dart';
 
 class AddVacancy1 extends StatefulWidget {
@@ -49,7 +49,28 @@ class _AddVacancy1State extends State<AddVacancy1> {
 
   Future<void> processForm() async {
     await getDoc();
-    update();
+    if (Categorydropdownvalue == 'Category') {
+      // Show AlertDialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Select a Category'),
+            content: Text('Please select a category from the dropdown.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      update();
+    }
   }
 
   Future update() async {

@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import 'package:login_page/ServiceEngineerTasks/addservice3.dart';
-import 'package:login_page/TenantTakss/Addvacancy3.dart';
+import 'package:login_page/Renter/Addvacancy3.dart';
 
 class AddVacancy2 extends StatefulWidget {
   const AddVacancy2({super.key});
@@ -34,6 +34,7 @@ class _AddVacancy2State extends State<AddVacancy2> {
   late FocusNode startSliderFocusNode;
   late FocusNode endSliderFocusNode;
   String? _imageUrl;
+  File? _selectedImage;
 
   final ImagePicker _imagePicker = ImagePicker();
 
@@ -71,25 +72,50 @@ class _AddVacancy2State extends State<AddVacancy2> {
     var user_email = FirebaseAuth.instance.currentUser!.email;
 
     final pickedFile = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1920,
-        maxHeight: 1080,
-        imageQuality: 80);
+      source: ImageSource.gallery,
+      maxWidth: 1920,
+      maxHeight: 1080,
+      imageQuality: 80,
+    );
+
     if (pickedFile != null) {
       final file = File(pickedFile.path);
-      final fileName = 'Vacancy Image';
-      final storagePath = 'Vacancy_Image/$user_email/$fileName';
 
-      final storageRef = FirebaseStorage.instance.ref().child(storagePath);
-      final task = storageRef.putFile(file);
-      await task.whenComplete(() async {
-        final imageUrl = await storageRef.getDownloadURL();
-        setState(() {
-          _imageUrl = imageUrl;
+      if (file.lengthSync() > 1048576) {
+        // Image size exceeds 1MB
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Image Size Limit Exceeded'),
+              content: Text('Please select an image up to 1MB in size.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        final fileName = 'Vacancy Image';
+        final storagePath = 'Vacancy_Image/$user_email/$fileName';
+
+        final storageRef = FirebaseStorage.instance.ref().child(storagePath);
+        final task = storageRef.putFile(file);
+        await task.whenComplete(() async {
+          final imageUrl = await storageRef.getDownloadURL();
+          setState(() {
+            _selectedImage = file;
+            _imageUrl = imageUrl;
+          });
+        }).catchError((error) {
+          print('Image upload Error: $error');
         });
-      }).catchError((error) {
-        print('Image upload Error:$error');
-      });
+      }
     }
   }
 
@@ -275,17 +301,63 @@ class _AddVacancy2State extends State<AddVacancy2> {
 
   Future update() async {
     if (_key.currentState!.validate()) {
-      try {
-        addServiceDetails(
-            startsliderController.text.trim(),
-            endsliderController.text.trim(),
-            averageController.text.trim(),
-            scopeController.text.trim());
-        errorMessage = '';
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => AddVacancy3()));
-      } on FirebaseException catch (error) {
-        errorMessage = error.message!;
+      if (_selectedImage == null) {
+        // Image is empty
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Image Not Provided'),
+              content: Text('Please select an image.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        try {
+          // Validate image size again before updating
+          if (_selectedImage!.lengthSync() > 1048576) {
+            // Image size exceeds 1MB
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Image Size Limit Exceeded'),
+                  content: Text('Please select an image up to 1MB in size.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            addServiceDetails(
+              startsliderController.text.trim(),
+              endsliderController.text.trim(),
+              averageController.text.trim(),
+              scopeController.text.trim(),
+            );
+            errorMessage = '';
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => AddVacancy3()),
+            );
+          }
+        } on FirebaseException catch (error) {
+          errorMessage = error.message!;
+        }
       }
       setState(() {});
     }
@@ -308,6 +380,12 @@ class _AddVacancy2State extends State<AddVacancy2> {
   String? validateScope(String? value) {
     if (value!.isEmpty) {
       return 'Enter your Vacancy Description';
+    }
+  }
+
+  String? validateImage(String? value) {
+    if (value!.isEmpty) {
+      return 'Please provide an image';
     }
   }
 }
