@@ -9,13 +9,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:login_page/Homepages/3dview.dart';
 import 'package:login_page/Homepages/Report.dart';
+import 'package:login_page/Homepages/in_app_tour_target.dart';
 import 'package:login_page/Renter/requestforservice.dart';
 import 'package:login_page/Renter/requestforvacancy.dart';
 import 'package:readmore/readmore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ImageDetailView extends StatelessWidget {
+class ImageDetailView extends StatefulWidget {
   ImageDetailView({
     Key? key,
     required this.imageUrl,
@@ -24,6 +26,57 @@ class ImageDetailView extends StatelessWidget {
 
   final String imageUrl;
   final String imageName;
+
+  @override
+  State<ImageDetailView> createState() => _ImageDetailViewState();
+}
+
+class _ImageDetailViewState extends State<ImageDetailView> {
+  final imagekey = GlobalKey();
+
+  final desckey = GlobalKey();
+
+  final phonekey = GlobalKey();
+
+  final threedkey = GlobalKey();
+
+  final pricekey = GlobalKey();
+
+  final inquirekey = GlobalKey();
+
+  late TutorialCoachMark _tutotrialCoachMark;
+
+  void _initDetailtargers() {
+    _tutotrialCoachMark = TutorialCoachMark(
+        targets: vacancyDetailTargets(
+          imagekey: imagekey,
+          desckey: desckey,
+          phonekey: phonekey,
+          threedkey: threedkey,
+          pricekey: pricekey,
+          inquirekey: inquirekey,
+        ),
+        colorShadow: Color(0xFF858585),
+        paddingFocus: 10,
+        hideSkip: false,
+        opacityShadow: 0.8,
+        onFinish: () {
+          print('Completed');
+        });
+  }
+
+  void _showdetailTour() {
+    Future.delayed(const Duration(seconds: 1), () {
+      _tutotrialCoachMark.show(context: context);
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _initDetailtargers();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +97,7 @@ class ImageDetailView extends StatelessWidget {
 
     return Scaffold(
       body: FutureBuilder<dynamic>(
-        future: fetchData('Vacancy', imageName),
+        future: fetchData('Vacancy', widget.imageName),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -74,7 +127,7 @@ class ImageDetailView extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (context) => RequestForVacancy(
                           baseID: vacancyData['baseID'],
-                          imagename: imageName,
+                          imagename: widget.imageName,
                           token: vacancyData['token'],
                         ),
                       ),
@@ -94,10 +147,11 @@ class ImageDetailView extends StatelessWidget {
                   children: [
                     Center(
                       child: Container(
+                        key: imagekey,
                         height: screenHeight * 0.3,
                         width: screenWidth * 0.95,
                         child: CachedNetworkImage(
-                          imageUrl: imageUrl,
+                          imageUrl: widget.imageUrl,
                           imageBuilder: (context, imageProvider) => Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
@@ -172,19 +226,32 @@ class ImageDetailView extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 30),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    'Description:',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF000000),
+                Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'Description',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF000000),
+                        ),
+                      ),
                     ),
-                  ),
+                    Spacer(),
+                    IconButton(
+                      onPressed: () {
+                        _showdetailTour();
+                      },
+                      icon: Icon(Icons.question_mark_sharp),
+                      color: Color(0xFFDB2227),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 15),
                 Padding(
+                  key: desckey,
                   padding:
                       const EdgeInsets.symmetric(vertical: 1, horizontal: 20),
                   child: ReadMoreText(
@@ -258,12 +325,17 @@ class ImageDetailView extends StatelessWidget {
                       width: screenWidth * 0.034,
                     ),
                     Align(
+                      key: phonekey,
                       alignment: Alignment.centerRight,
                       child: phoneSection,
                     ),
                   ],
                 ),
+                SizedBox(
+                  height: 20,
+                ),
                 Padding(
+                  key: threedkey,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: GestureDetector(
                     onTap: () {
@@ -295,15 +367,14 @@ class ImageDetailView extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                SizedBox(
-                  height: 20,
-                ),
+                Spacer(),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Row(
                     children: [
                       Column(
+                        key: pricekey,
                         children: [
                           Text(
                             'Price Range',
@@ -325,6 +396,7 @@ class ImageDetailView extends StatelessWidget {
                       ),
                       SizedBox(width: 130),
                       Padding(
+                        key: inquirekey,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: GestureDetector(
                           onTap: () {
@@ -333,7 +405,7 @@ class ImageDetailView extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (context) => RequestForVacancy(
                                   baseID: vacancyData['baseID'],
-                                  imagename: imageName,
+                                  imagename: widget.imageName,
                                   token: vacancyData['token'],
                                 ),
                               ),

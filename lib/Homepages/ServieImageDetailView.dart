@@ -5,19 +5,64 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:login_page/Homepages/in_app_tour_target.dart';
 import 'package:login_page/Renter/requestforservice.dart';
 import 'package:login_page/Renter/requestforvacancy.dart';
 import 'package:readmore/readmore.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_cube/flutter_cube.dart';
 
-class ServiceImageDetailView extends StatelessWidget {
+class ServiceImageDetailView extends StatefulWidget {
   ServiceImageDetailView(
       {Key? key, required this.imageUrl, required this.imageName})
       : super(key: key);
 
   final String imageUrl;
   final String imageName;
+
+  @override
+  State<ServiceImageDetailView> createState() => _ServiceImageDetailViewState();
+}
+
+class _ServiceImageDetailViewState extends State<ServiceImageDetailView> {
+  final imagekey = GlobalKey();
+  final desckey = GlobalKey();
+  final phonekey = GlobalKey();
+  final pricekey = GlobalKey();
+  final inquirekey = GlobalKey();
+
+  late TutorialCoachMark _tutorialCoachMark;
+
+  void _initServiceDetailtargets() {
+    _tutorialCoachMark = TutorialCoachMark(
+        targets: serviceDetailTargets(
+            imagekey: imagekey,
+            desckey: desckey,
+            phonekey: phonekey,
+            pricekey: pricekey,
+            inquirekey: inquirekey),
+        colorShadow: Color(0xFF858585),
+        paddingFocus: 10,
+        hideSkip: false,
+        opacityShadow: 0.8,
+        onFinish: () {
+          print('Completed');
+        });
+  }
+
+  void _showdetailTour() {
+    Future.delayed(const Duration(seconds: 1), () {
+      _tutorialCoachMark.show(context: context);
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _initServiceDetailtargets();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +82,7 @@ class ServiceImageDetailView extends StatelessWidget {
     );
     return Scaffold(
       body: FutureBuilder<dynamic>(
-        future: fetchData('Engineer_Services', imageName),
+        future: fetchData('Engineer_Services', widget.imageName),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -66,7 +111,7 @@ class ServiceImageDetailView extends StatelessWidget {
                         MaterialPageRoute(
                             builder: (context) => RequestForService(
                                   baseID: vacancyData['baseID'],
-                                  imagename: imageName,
+                                  imagename: widget.imageName,
                                 )));
                   },
                   icon: msgsvg,
@@ -85,10 +130,11 @@ class ServiceImageDetailView extends StatelessWidget {
                   children: [
                     Center(
                       child: Container(
+                        key: imagekey,
                         height: screenHeight * 0.33,
                         width: screenWidth * 0.95,
                         child: CachedNetworkImage(
-                          imageUrl: imageUrl,
+                          imageUrl: widget.imageUrl,
                           imageBuilder: (context, imageProvider) => Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15),
@@ -170,20 +216,33 @@ class ServiceImageDetailView extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 20,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Description',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Description',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
-                  ),
+                    Spacer(),
+                    IconButton(
+                      onPressed: () {
+                        _showdetailTour();
+                      },
+                      icon: Icon(Icons.question_mark_sharp),
+                      color: Color(0xFFDB2227),
+                    ),
+                  ],
                 ),
                 Padding(
+                  key: desckey,
                   padding: const EdgeInsets.all(8.0),
                   child: ReadMoreText(
                     '${vacancyData['Scope']}',
@@ -258,17 +317,20 @@ class ServiceImageDetailView extends StatelessWidget {
                       width: screenWidth * 0.07,
                     ),
                     Align(
+                      key: phonekey,
                       alignment: Alignment.centerRight,
                       child: phoneSection,
                     ),
                   ],
                 ),
+                Spacer(),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 1),
                   child: Row(
                     children: [
                       Column(
+                        key: pricekey,
                         children: [
                           Text(
                             'Price Range',
@@ -292,6 +354,7 @@ class ServiceImageDetailView extends StatelessWidget {
                         width: screenWidth * 0.3,
                       ),
                       Padding(
+                        key: inquirekey,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 1, vertical: 8),
                         child: SizedBox(
@@ -303,7 +366,7 @@ class ServiceImageDetailView extends StatelessWidget {
                                 MaterialPageRoute(
                                   builder: (context) => RequestForService(
                                     baseID: vacancyData['baseID'],
-                                    imagename: imageName,
+                                    imagename: widget.imageName,
                                   ),
                                 ),
                               );

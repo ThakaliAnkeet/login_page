@@ -24,66 +24,108 @@ class _ReportPageState extends State<ReportPage> {
   Future<void> _exportReportAsPdf() async {
     final status = await Permission.storage.request();
     if (status.isGranted) {
-      final pdf = pw.Document();
-      final title = _titleController.text;
-      final name = _nameController.text;
-      final email = _emailController.text;
-      final address = _addressController.text;
-      final phone = _phoneController.text;
-      final description = _descriptionController.text;
-
-      pdf.addPage(
-        pw.Page(
-          build: (pw.Context context) {
-            return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text(
-                  title,
-                  style: pw.TextStyle(
-                      fontSize: 20, fontWeight: pw.FontWeight.bold),
-                ),
-                pw.SizedBox(height: 10),
-                pw.Text('User Information:'),
-                pw.Text('Name: $name'),
-                pw.Text('Email: $email'),
-                pw.Text('Address: $address'),
-                pw.Text('Phone: $phone'),
-                pw.SizedBox(height: 10),
-                pw.Text('Description:'),
-                pw.Text(description),
-              ],
-            );
-          },
-        ),
-      );
-
-      final directoryPath = await FilePicker.platform.getDirectoryPath();
-      if (directoryPath != null) {
-        final file = File('$directoryPath/report.pdf');
-        await file.writeAsBytes(await pdf.save());
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Report downloaded successfully')),
-        );
-
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('PDF Exported'),
-            content: Text('The report has been exported as a PDF.'),
+      // Show a dialog to enter the file name
+      final fileName = await showDialog<String>(
+        context: context,
+        builder: (BuildContext context) {
+          final TextEditingController _fileNameController =
+              TextEditingController();
+          return AlertDialog(
+            title: Text('Enter file name'),
+            content: TextFormField(
+              controller: _fileNameController,
+              decoration: InputDecoration(
+                hintText: 'File Name',
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please enter a file name';
+                }
+                return null;
+              },
+            ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('OK'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context, _fileNameController.text);
+                },
+                child: Text('Save'),
               ),
             ],
+          );
+        },
+      );
+
+      if (fileName != null) {
+        final pdf = pw.Document();
+        final title = _titleController.text;
+        final name = _nameController.text;
+        final email = _emailController.text;
+        final address = _addressController.text;
+        final phone = _phoneController.text;
+        final description = _descriptionController.text;
+
+        pdf.addPage(
+          pw.Page(
+            build: (pw.Context context) {
+              return pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text(
+                    title,
+                    style: pw.TextStyle(
+                      fontSize: 20,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.SizedBox(height: 10),
+                  pw.Text('User Information:'),
+                  pw.Text('Name: $name'),
+                  pw.Text('Email: $email'),
+                  pw.Text('Address: $address'),
+                  pw.Text('Phone: $phone'),
+                  pw.SizedBox(height: 10),
+                  pw.Text('Description:'),
+                  pw.Text(description),
+                ],
+              );
+            },
           ),
         );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No directory selected')),
-        );
+
+        final directoryPath = await FilePicker.platform.getDirectoryPath();
+        if (directoryPath != null) {
+          final file = File('$directoryPath/$fileName.pdf');
+          await file.writeAsBytes(await pdf.save());
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Report downloaded successfully')),
+          );
+
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('PDF Exported'),
+              content: Text('The report has been exported as a PDF.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('No directory selected')),
+          );
+        }
       }
     } else if (status.isPermanentlyDenied) {
       ScaffoldMessenger.of(context).showSnackBar(
