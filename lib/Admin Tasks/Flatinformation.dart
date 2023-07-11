@@ -103,7 +103,7 @@ class _FlatInformationPageState extends State<FlatInformationPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Flat Information'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Color(0xFFDB2227),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

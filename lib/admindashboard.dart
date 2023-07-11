@@ -21,14 +21,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Admin Dashboard'),
-          backgroundColor: Colors.deepPurple,
+          backgroundColor: Color(0xFFDB2227),
         ),
         drawer: Drawer(
+          backgroundColor: Color(0xFFDB2227),
           child: ListView(
             children: <Widget>[
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.deepPurple,
+                  color: Color(0xFFDB2227),
                 ),
                 child: Text(
                   'Menu',
@@ -39,8 +40,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.person),
-                title: Text('Change Password'),
+                leading: Icon(Icons.person, color: Colors.white),
+                title: Text(
+                  'Change Password',
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.white,
+                  ),
+                ),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.push(
@@ -50,8 +57,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.lock),
-                title: Text('Reset Password'),
+                leading: Icon(Icons.lock, color: Colors.white),
+                title: Text(
+                  'Reset Password',
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.white,
+                  ),
+                ),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.push(
@@ -62,8 +75,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.logout),
-                title: Text('Logout'),
+                leading: Icon(Icons.logout, color: Colors.white),
+                title: Text(
+                  'Logout',
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.white,
+                  ),
+                ),
                 onTap: () => _signOut(context),
               ),
             ],

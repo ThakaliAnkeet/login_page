@@ -385,7 +385,7 @@ class _ImageDetailViewState extends State<ImageDetailView> {
                             ),
                           ),
                           Text(
-                            '${vacancyData['Starting Price']} - ${vacancyData['End Price']}',
+                            '${vacancyData['Starting Price'] + ' OM'} - ${vacancyData['End Price'] + ' OM'}',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -394,7 +394,7 @@ class _ImageDetailViewState extends State<ImageDetailView> {
                           ),
                         ],
                       ),
-                      SizedBox(width: 130),
+                      SizedBox(width: 70),
                       Padding(
                         key: inquirekey,
                         padding: const EdgeInsets.symmetric(horizontal: 10),

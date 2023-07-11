@@ -93,7 +93,7 @@ class imagelist extends StatelessWidget {
                                       vacancyData['Starting Price'];
                                   String endprice = vacancyData['End Price'];
                                   return Text(
-                                    'Price: $startprice-$endprice', // Replace with your price data
+                                    'Price: ${startprice + ' OM'}-${endprice + ' OM'}', // Replace with your price data
                                     style: GoogleFonts.raleway(
                                       fontSize: 17.1,
                                       color: Color(0xFF4EFB12),

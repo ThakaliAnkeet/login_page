@@ -106,7 +106,7 @@ class _ApartmentsPageState extends State<ApartmentsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Apartment Information'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Color(0xFFDB2227),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

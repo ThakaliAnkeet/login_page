@@ -54,7 +54,7 @@ class _ServicesPageState extends State<ServicesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Services'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Color(0xFFDB2227),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _db.collection('services').snapshots(),
